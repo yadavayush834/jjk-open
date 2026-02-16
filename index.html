@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jujutsu Kaisen — Cursed Technique Simulator</title>
+  <meta name="description" content="Simulate Gojo Satoru's Infinity powers — Blue, Red, and Hollow Purple with real-time hand tracking and voice commands." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-content">
+      <div class="six-eyes">
+        <div class="eye left-eye"></div>
+        <div class="eye right-eye"></div>
+      </div>
+      <h1 class="loading-title">CURSED TECHNIQUE</h1>
+      <p class="loading-sub">Initializing Six Eyes…</p>
+      <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+    <!-- Video + Canvas Container -->
+    <div id="viewport">
+      <div id="stage-guide">TEXT AND ANIMATION APPEAR HERE</div>
+      <div id="detection-panel">
+        <video id="camera" autoplay playsinline muted></video>
+        <div class="detection-caption">PERSON IMAGE AND DETECTION</div>
+      </div>
+      <canvas id="fx-canvas"></canvas>
+      <!-- Hollow Purple Flash Overlay -->
+      <div id="flash-overlay"></div>
+    </div>
+
+    <!-- HUD Overlay -->
+    <div id="hud">
+      <div class="hud-top">
+        <div class="hud-title">
+          <span class="hud-icon">⬡</span>
+          <span>CURSED TECHNIQUE SIMULATOR</span>
+        </div>
+        <div id="voice-status" class="hud-status off">
+          <span class="mic-dot"></span>
+          <span id="voice-text">MIC OFF</span>
+        </div>
+      </div>
+
+      <div class="hud-bottom">
+        <div class="power-indicator left-power" id="blue-indicator">
+          <div class="power-ring blue-ring"></div>
+          <span class="power-label">術式順転「蒼」</span>
+          <span class="power-name">BLUE</span>
+          <span class="power-key">Say "Blue"</span>
+        </div>
+        <div class="power-indicator center-power" id="purple-indicator">
+          <div class="power-ring purple-ring"></div>
+          <span class="power-label">虚式「茈」</span>
+          <span class="power-name">HOLLOW PURPLE</span>
+          <span class="power-key">Bring hands close + Say "Hollow Purple"</span>
+        </div>
+        <div class="power-indicator right-power" id="red-indicator">
+          <div class="power-ring red-ring"></div>
+          <span class="power-label">術式反転「赫」</span>
+          <span class="power-name">RED</span>
+          <span class="power-key">Say "Red"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start Button (shown before permissions) -->
+    <div id="start-overlay">
+      <button id="start-btn">
+        <span class="btn-text">ACTIVATE SIX EYES</span>
+        <span class="btn-sub">Camera + Microphone Required</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MediaPipe (pinned versions for stability) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js" crossorigin="anonymous"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
