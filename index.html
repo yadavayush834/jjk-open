@@ -1,93 +1,321 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jujutsu Kaisen — Cursed Technique Simulator</title>
-  <meta name="description" content="Simulate Gojo Satoru's Infinity powers — Blue, Red, and Hollow Purple with real-time hand tracking and voice commands." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <div class="loading-content">
-      <div class="six-eyes">
-        <div class="eye left-eye"></div>
-        <div class="eye right-eye"></div>
-      </div>
-      <h1 class="loading-title">CURSED TECHNIQUE</h1>
-      <p class="loading-sub">Initializing Six Eyes…</p>
-      <div class="loading-bar"><div class="loading-fill"></div></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0c0d12" />
+    <meta
+      name="description"
+      content="Limitless — a Jujutsu Kaisen inspired technique playground. Shape cursed energy with your hands, voice, or keyboard."
+    />
+    <title>Limitless — Cursed Technique Playground</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Limitless home"
+          ><span class="brand-symbol">∞</span
+          ><span>LIMITLESS<small>JUJUTSU TECHNIQUE LAB</small></span></a
+        >
+        <nav aria-label="Main navigation">
+          <span class="nav-active">Playground</span
+          ><button id="guide-top" class="nav-button">Technique guide <span>↗</span></button>
+        </nav>
+        <div class="top-actions">
+          <span class="local-badge"><i></i> RUNS ON YOUR DEVICE</span
+          ><button
+            id="sound-toggle"
+            class="icon-button"
+            aria-label="Enable sound"
+            aria-pressed="false"
+          >
+            ♫</button
+          ><button id="settings-open" class="icon-button" aria-label="Open settings">⚙</button>
+        </div>
+      </header>
+      <main>
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow"><span></span> THE LIMITLESS EXPERIENCE <b>VOL. 01</b></div>
+            <h1>Infinity is in <em>your hands.</em></h1>
+            <p>Attract. Repel. Erase. Make cursed energy your own.</p>
+          </div>
+          <button id="guide-open" class="subtle-button">
+            <span>⌘</span> How to play <kbd>?</kbd>
+          </button>
+        </div>
+        <section class="lab-layout" aria-label="Technique playground">
+          <div class="playground">
+            <div class="stage" id="stage">
+              <canvas id="effects" aria-label="Interactive cursed energy simulation"></canvas
+              ><video id="ar-video" autoplay playsinline muted hidden></video>
+              <div class="stage-top">
+                <span class="stage-live"><i></i> LIVE SIMULATION</span>
+                <div>
+                  <span id="input-label">MOUSE + KEYBOARD</span><span class="stage-divider"></span
+                  ><span id="fps">60 FPS</span>
+                </div>
+              </div>
+              <div class="stage-title">
+                <div class="stage-index" id="stage-index">01 / LAPSE</div>
+                <h2 id="technique-title">Blue<span>蒼</span></h2>
+                <p id="technique-description">An impossible force of attraction.</p>
+              </div>
+              <div class="stage-side">
+                <span>CURSED ENERGY OUTPUT</span>
+                <div>
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                  ><i></i>
+                </div>
+                <b id="output-value">100%</b>
+              </div>
+              <div class="target-label">
+                <span id="target-state">TRAINING TARGET</span>
+                <div id="target-health" aria-label="Target energy">
+                  <i></i><i></i><i></i><i></i><i></i>
+                </div>
+              </div>
+              <div class="cast-announcement" id="cast-announcement" aria-live="polite"></div>
+              <div class="stage-bottom">
+                <span><i class="cursor-icon">⌖</i> Move to aim <b>·</b> Click to cast</span
+                ><button id="reset" class="stage-button">↻ <span>Reset</span> <kbd>R</kbd></button
+                ><button id="pause" class="stage-button" aria-pressed="false">
+                  Ⅱ <span>Pause</span> <kbd>P</kbd></button
+                ><button id="fullscreen" class="stage-button" aria-label="Toggle fullscreen">
+                  ⛶
+                </button>
+              </div>
+              <div class="paused-overlay" id="paused-overlay" hidden>
+                <span>Ⅱ</span>
+                <h3>Take a breath.</h3>
+                <p>Press P or Resume to return to the technique.</p>
+                <button id="resume" class="primary-button">Resume simulation</button>
+              </div>
+            </div>
+            <div class="technique-strip" role="group" aria-label="Select technique">
+              <button class="technique-card active blue" data-technique="blue" aria-pressed="true">
+                <div class="technique-orb"></div>
+                <div>
+                  <small>術式順転</small><strong>Lapse: Blue</strong><span>Attraction</span>
+                </div>
+                <kbd>1</kbd><i></i>
+              </button>
+              <button class="technique-card red" data-technique="red" aria-pressed="false">
+                <div class="technique-orb"></div>
+                <div>
+                  <small>術式反転</small><strong>Reversal: Red</strong><span>Repulsion</span>
+                </div>
+                <kbd>2</kbd><i></i>
+              </button>
+              <button class="technique-card purple" data-technique="purple" aria-pressed="false">
+                <div class="technique-orb"></div>
+                <div>
+                  <small>虚式</small><strong>Hollow Purple</strong><span>Imaginary mass</span>
+                </div>
+                <kbd>3</kbd><i></i>
+              </button>
+              <button class="technique-card domain" data-technique="domain" aria-pressed="false">
+                <div class="technique-orb"></div>
+                <div>
+                  <small>領域展開</small><strong>Unlimited Void</strong
+                  ><span>Domain expansion</span>
+                </div>
+                <kbd>4</kbd><i></i>
+              </button>
+            </div>
+            <div class="under-stage">
+              <span
+                ><i></i><b id="cast-count">0</b> techniques cast <span class="dot-divider">·</span
+                ><b id="hit-count">0</b> target hits</span
+              ><span>LIMITLESS TECHNIQUE <b>∞</b></span>
+            </div>
+          </div>
+          <aside class="control-panel">
+            <div class="panel-title">
+              <h2>Your connection</h2>
+              <span class="version-tag">v2.0</span>
+            </div>
+            <p class="panel-description">The technique follows your lead.</p>
+            <div class="camera-preview" id="camera-preview">
+              <video id="camera" autoplay playsinline muted hidden></video
+              ><canvas id="hand-overlay"></canvas>
+              <div id="camera-placeholder">
+                <div class="hand-outline">✋</div>
+                <h3>Your hands. Your technique.</h3>
+                <p>Enable your camera to shape<br />cursed energy in real time.</p>
+              </div>
+              <div class="camera-badge" id="camera-badge"><i></i> CAMERA OFF</div>
+              <span class="camera-corner tl"></span><span class="camera-corner br"></span>
+            </div>
+            <button id="camera-toggle" class="primary-button">
+              <span>⌁</span><b>Enable hand tracking</b><span>↗</span>
+            </button>
+            <p class="camera-privacy">Camera frames stay on your device.</p>
+            <p id="camera-message" class="device-message" role="status"></p>
+            <div class="connection-stats">
+              <div>
+                <span>TRACKING</span><strong id="tracking-status"><i></i> Standby</strong>
+              </div>
+              <div>
+                <span>HANDS DETECTED</span><strong id="hand-count">0 <small>/ 2</small></strong>
+              </div>
+              <div><span>GESTURE</span><strong id="gesture-status">—</strong></div>
+            </div>
+            <div class="voice-row">
+              <div>
+                <span class="voice-icon">≋</span>
+                <div>
+                  <strong>Voice commands</strong
+                  ><small id="voice-status">Optional. Say the technique.</small>
+                </div>
+              </div>
+              <button
+                id="voice-toggle"
+                class="switch"
+                aria-label="Enable voice commands"
+                aria-pressed="false"
+              >
+                <span></span>
+              </button>
+            </div>
+            <p id="voice-message" class="device-message" role="status"></p>
+            <div class="quick-controls">
+              <span class="section-label">A LITTLE HELP FROM YOUR HANDS</span>
+              <div>
+                <span class="gesture-symbol">☝</span>
+                <p><strong>Point a finger</strong><small>Hold to select Blue</small></p>
+                <span class="gesture-type blue">BLUE</span>
+              </div>
+              <div>
+                <span class="gesture-symbol">✋</span>
+                <p><strong>Open your palm</strong><small>Hold to select Red</small></p>
+                <span class="gesture-type red">RED</span>
+              </div>
+              <div>
+                <span class="gesture-symbol">🤏</span>
+                <p>
+                  <strong>Pinch to release</strong><small>Launch your selected technique</small>
+                </p>
+                <span class="gesture-type">CAST</span>
+              </div>
+              <button id="all-gestures" class="text-button">
+                See all gestures & controls <span>↗</span>
+              </button>
+            </div>
+            <div class="cast-control">
+              <button id="cast" class="cast-button">
+                <span>Release technique</span><kbd>SPACE</kbd>
+              </button>
+              <p id="cast-hint">Ready when you are.</p>
+            </div>
+          </aside>
+        </section>
+        <footer class="page-footer">
+          <span>AN UNOFFICIAL FAN EXPERIMENT <i>·</i> INSPIRED BY JUJUTSU KAISEN</span
+          ><span>Take it slow. Master the limitless. <b>∞</b></span>
+        </footer>
+      </main>
     </div>
-  </div>
-
-  <!-- Main App -->
-  <div id="app" class="hidden">
-    <!-- Video + Canvas Container -->
-    <div id="viewport">
-      <div id="stage-guide">TEXT AND ANIMATION APPEAR HERE</div>
-      <div id="detection-panel">
-        <video id="camera" autoplay playsinline muted></video>
-        <div class="detection-caption">PERSON IMAGE AND DETECTION</div>
+    <dialog id="guide-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="section-label">A CRASH COURSE IN CURSED ENERGY</span>
+          <h2>Find your technique.</h2>
+        </div>
+        <button class="icon-button" data-close aria-label="Close guide">×</button>
       </div>
-      <canvas id="fx-canvas"></canvas>
-      <!-- Hollow Purple Flash Overlay -->
-      <div id="flash-overlay"></div>
-    </div>
-
-    <!-- HUD Overlay -->
-    <div id="hud">
-      <div class="hud-top">
-        <div class="hud-title">
-          <span class="hud-icon">⬡</span>
-          <span>CURSED TECHNIQUE SIMULATOR</span>
-        </div>
-        <div id="voice-status" class="hud-status off">
-          <span class="mic-dot"></span>
-          <span id="voice-text">MIC OFF</span>
-        </div>
+      <p class="dialog-intro">
+        No camera? No problem. Every technique works with your mouse, keyboard, or touch.
+      </p>
+      <div class="guide-grid">
+        <article>
+          <span class="guide-number blue">01</span>
+          <h3>Lapse: Blue</h3>
+          <p>
+            Energy collapses inward, drawing space into a singularity. Point with your index finger
+            for a moment to select it.
+          </p>
+          <kbd>1</kbd>
+        </article>
+        <article>
+          <span class="guide-number red">02</span>
+          <h3>Reversal: Red</h3>
+          <p>
+            A compressed core releases an explosive wave of repulsion. Open your palm for a moment
+            to select it.
+          </p>
+          <kbd>2</kbd>
+        </article>
+        <article>
+          <span class="guide-number purple">03</span>
+          <h3>Hollow Purple</h3>
+          <p>
+            Blue and Red spiral together, fuse, and release imaginary mass. Pinch with both hands
+            close together and hold to cast.
+          </p>
+          <kbd>3</kbd>
+        </article>
+        <article>
+          <span class="guide-number">04</span>
+          <h3>Unlimited Void</h3>
+          <p>
+            Space gives way to an infinite field of information. Hold up your index and middle
+            fingers for one second to expand your domain.
+          </p>
+          <kbd>4</kbd>
+        </article>
       </div>
-
-      <div class="hud-bottom">
-        <div class="power-indicator left-power" id="blue-indicator">
-          <div class="power-ring blue-ring"></div>
-          <span class="power-label">術式順転「蒼」</span>
-          <span class="power-name">BLUE</span>
-          <span class="power-key">Say "Blue"</span>
-        </div>
-        <div class="power-indicator center-power" id="purple-indicator">
-          <div class="power-ring purple-ring"></div>
-          <span class="power-label">虚式「茈」</span>
-          <span class="power-name">HOLLOW PURPLE</span>
-          <span class="power-key">Bring hands close + Say "Hollow Purple"</span>
-        </div>
-        <div class="power-indicator right-power" id="red-indicator">
-          <div class="power-ring red-ring"></div>
-          <span class="power-label">術式反転「赫」</span>
-          <span class="power-name">RED</span>
-          <span class="power-key">Say "Red"</span>
-        </div>
+      <div class="guide-keyboard">
+        <span><kbd>SPACE</kbd> Cast</span><span><kbd>R</kbd> Reset</span
+        ><span><kbd>P</kbd> Pause</span><span><kbd>F</kbd> Fullscreen</span>
       </div>
-    </div>
-
-    <!-- Start Button (shown before permissions) -->
-    <div id="start-overlay">
-      <button id="start-btn">
-        <span class="btn-text">ACTIVATE SIX EYES</span>
-        <span class="btn-sub">Camera + Microphone Required</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- MediaPipe (pinned versions for stability) -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js" crossorigin="anonymous"></script>
-
-  <script src="app.js"></script>
-</body>
+      <p class="guide-note">
+        Tracking works best with good front lighting, one person in view, and your whole hand
+        visible. Pinch thumb and index together to cast; open them again before the next cast. Voice
+        recognition depends on browser support and may use your browser’s online speech service.
+      </p>
+      <button class="primary-button" data-close>Got it. Let’s bend infinity. <span>↗</span></button>
+    </dialog>
+    <dialog id="settings-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="section-label">MAKE IT YOURS</span>
+          <h2>Fine-tune your infinity.</h2>
+        </div>
+        <button class="icon-button" data-close aria-label="Close settings">×</button>
+      </div>
+      <label class="setting-row"
+        ><span
+          ><strong>Visual quality</strong
+          ><small>Lower settings use fewer display pixels and particles.</small></span
+        ><select id="quality">
+          <option value="low">Low · lighter on laptops</option>
+          <option value="balanced" selected>Balanced</option>
+          <option value="high">High · extra detail</option>
+        </select></label
+      ><label class="setting-row"
+        ><span
+          ><strong>Reduced motion</strong
+          ><small>Gentler particles, no camera shake or impact flashes.</small></span
+        ><input id="reduced-motion" type="checkbox" /></label
+      ><label class="setting-row"
+        ><span
+          ><strong>Gesture selection</strong
+          ><small>Let hand poses select techniques automatically.</small></span
+        ><input id="gesture-selection" type="checkbox" checked /></label
+      ><label class="setting-row"
+        ><span
+          ><strong>Camera stage</strong
+          ><small>Place energy directly over your mirrored camera feed.</small></span
+        ><input id="ar-mode" type="checkbox"
+      /></label>
+      <div class="setting-note">
+        Hand tracking runs separately from the animation, at a limited inference rate. No
+        face-tracking model is loaded.
+      </div>
+      <button class="primary-button" data-close>Back to the playground <span>↗</span></button>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
